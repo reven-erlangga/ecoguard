@@ -34,6 +34,7 @@ export class MapCardComponent {
   private marker: any | null = null;
   private glowOuter: any | null = null;
   private glowInner: any | null = null;
+  protected readonly tileError = signal(false);
 
   constructor() {
     effect(() => {
@@ -56,10 +57,13 @@ export class MapCardComponent {
               scrollWheelZoom: false,
             });
 
-            L.tileLayer(
-              'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-              { attribution: 'Tiles © Esri', maxZoom: 16 }
-            ).addTo(this.map);
+            const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© OpenStreetMap contributors',
+              maxZoom: 19,
+            }).addTo(this.map);
+
+            tiles.on('tileerror', () => this.tileError.set(true));
+            tiles.on('load', () => this.tileError.set(false));
           }
 
           this.map.setView([lat, lon], 16);
