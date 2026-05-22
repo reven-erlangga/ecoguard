@@ -15,6 +15,13 @@ Environment variable yang dipakai:
 
 Di dua cara ini, best practice untuk `.env` tetap sama: **jangan upload file `.env`**, gunakan **Cloud Run env vars** / **Secret Manager**.
 
+## Dockerfile (wajib untuk deploy Cloud Run)
+
+Folder `frontend/` sudah punya `Dockerfile`. Cloud Run menjalankan aplikasi sebagai container, jadi Dockerfile ini dipakai oleh Docker/Cloud Build untuk menghasilkan image yang berisi:
+
+- hasil build Angular SSR (`dist/frontend/browser` + `dist/frontend/server`)
+- runtime Node untuk menjalankan `dist/frontend/server/server.mjs`
+
 ## A) Dengan gcloud CLI
 
 ### A0) Prasyarat
@@ -49,6 +56,11 @@ Catatan:
 - `.env` untuk local dev/build. Jangan upload `.env` ke repo.
 - Di GCP, pakai **Cloud Run env vars** atau **Secret Manager**.
 
+Checklist sebelum push ke GitHub:
+
+- Pastikan `.env` tidak ikut ke Git (sudah di-ignore oleh `.gitignore`)
+- Pastikan tidak ada file credential/key (service account, private key, dll) di-commit
+
 ### A2) Test build & run SSR di lokal (opsional tapi direkomendasikan)
 
 ```bash
@@ -56,6 +68,18 @@ npm ci
 npm run build
 PORT=4000 node dist/frontend/server/server.mjs
 ```
+
+Kalau mau test pakai Docker lokal:
+
+```bash
+docker build --build-arg BACKEND_URL="http://localhost:3001" -t google-event-frontend .
+docker run --rm -p 8080:8080 -e BACKEND_URL="http://localhost:3001" google-event-frontend
+```
+
+Buka:
+
+- http://localhost:4000 (tanpa Docker)
+- http://localhost:8080 (pakai Docker)
 
 ### A3) Buat Artifact Registry
 
@@ -66,6 +90,14 @@ PROJECT_ID="<PROJECT_ID>"
 REGION="asia-southeast2"
 REPO="frontend-repo"
 SERVICE="google-event-frontend"
+```
+
+Biar rapi, siapkan juga:
+
+```bash
+BACKEND_URL="https://<DOMAIN_BACKEND_PROD>"
+TAG="v1"
+IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO/$SERVICE:$TAG"
 ```
 
 Buat repo Docker:
@@ -82,64 +114,13 @@ Auth Docker ke Artifact Registry (hanya diperlukan kalau kamu push dari laptop):
 gcloud auth configure-docker "$REGION-docker.pkg.dev"
 ```
 
-### A4) Dockerfile (multi-stage) untuk Angular SSR
-
-Buat file `Dockerfile` di root project (`frontend/Dockerfile`) dengan isi berikut:
-
-```Dockerfile
-# ---- Build stage ----
-FROM node:20-alpine AS build
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-
-# Inject env saat build (untuk code browser bundle yang memakai process.env)
-ARG BACKEND_URL
-ENV BACKEND_URL=$BACKEND_URL
-
-RUN npm run build
-
-# ---- Runtime stage ----
-FROM node:20-alpine AS runtime
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Cloud Run akan set PORT otomatis, default di server.ts adalah 4000
-ENV PORT=8080
-
-# Set juga BACKEND_URL di runtime (untuk SSR/server side)
-ARG BACKEND_URL
-ENV BACKEND_URL=$BACKEND_URL
-
-COPY --from=build /app/dist ./dist
-
-EXPOSE 8080
-CMD ["node", "dist/frontend/server/server.mjs"]
-```
-
-Kenapa ada `ARG/ENV BACKEND_URL` dua kali?
-
-- Saat `npm run build`: supaya nilai `process.env['BACKEND_URL']` kebawa ke bundle browser (build-time).
-- Saat runtime: supaya SSR/server juga baca `BACKEND_URL` dari environment.
-
-### A5) Build & push image
-
-Pilih tag image:
-
-```bash
-TAG="v1"
-IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO/$SERVICE:$TAG"
-```
+### A4) Build & push image
 
 #### A5a) Build pakai Docker lokal
 
 ```bash
 docker build \
-  --build-arg BACKEND_URL="https://<DOMAIN_BACKEND_PROD>" \
+  --build-arg BACKEND_URL="$BACKEND_URL" \
   -t "$IMAGE" \
   .
 
@@ -151,7 +132,7 @@ docker push "$IMAGE"
 ```bash
 gcloud builds submit \
   --config=- \
-  --substitutions=_BACKEND_URL="https://<DOMAIN_BACKEND_PROD>",_IMAGE="$IMAGE" \
+  --substitutions=_BACKEND_URL="$BACKEND_URL",_IMAGE="$IMAGE" \
   . <<'YAML'
 steps:
   - name: 'gcr.io/cloud-builders/docker'
@@ -167,7 +148,7 @@ images:
 YAML
 ```
 
-### A6) Deploy ke Cloud Run
+### A5) Deploy ke Cloud Run
 
 ```bash
 gcloud run deploy "$SERVICE" \
@@ -175,8 +156,13 @@ gcloud run deploy "$SERVICE" \
   --region "$REGION" \
   --platform managed \
   --allow-unauthenticated \
-  --set-env-vars "BACKEND_URL=https://<DOMAIN_BACKEND_PROD>"
+  --set-env-vars "BACKEND_URL=$BACKEND_URL"
 ```
+
+Setelah deploy berhasil, kamu akan dapat URL service Cloud Run. Gunakan URL itu untuk:
+
+- test akses web
+- set CORS di backend (lihat bagian CORS)
 
 ## B) Tanpa gcloud CLI (Full Console UI)
 
@@ -212,13 +198,13 @@ Console → **Cloud Build** → **Triggers** → **Create trigger**
 
 - Source: GitHub → pilih repo + branch
 - Configuration: `Dockerfile`
-- Dockerfile directory: `/` (root `frontend`)
+- Dockerfile directory: `/` (root repo `frontend`)
 - Image (Artifact Registry): pilih repo `frontend-repo`, lalu set image name `google-event-frontend` dan tag (mis. `v1`)
 
 Set `BACKEND_URL`:
 
-- Di build trigger, kalau UI mendukung build args/substitutions, isi `BACKEND_URL` supaya kebawa saat build.
-- Kalau UI kamu tidak menyediakan build arg, minimal set `BACKEND_URL` di runtime Cloud Run (langkah B5). (Catatan: untuk project ini, build-time injection lebih aman agar bundle browser konsisten.)
+- Pastikan runtime Cloud Run punya env var `BACKEND_URL` (langkah B5).
+- Untuk project ini, build-time injection juga disarankan (karena ada penggunaan `process.env['BACKEND_URL']`). Kalau trigger UI kamu tidak bisa set build-arg, gunakan Cloud Shell (Cara A) untuk build via Cloud Build yang bisa pakai `--build-arg`.
 
 Jalankan trigger sekali untuk menghasilkan image di Artifact Registry.
 
