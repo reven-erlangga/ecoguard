@@ -41,6 +41,9 @@ importers:
       ioredis:
         specifier: ^5.10.1
         version: 5.10.1
+      multer:
+        specifier: ^2.1.1
+        version: 2.1.1
       natural:
         specifier: ^8.1.1
         version: 8.1.1(@opentelemetry/api@1.9.1)
