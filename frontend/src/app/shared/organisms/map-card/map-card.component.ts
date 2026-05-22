@@ -36,6 +36,7 @@ export class MapCardComponent {
   private glowInner: any | null = null;
   protected readonly tileError = signal(false);
   protected readonly initError = signal(false);
+  protected readonly initErrorMessage = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -50,10 +51,19 @@ export class MapCardComponent {
       if (!el || lat == null || lon == null) return;
 
       this.initError.set(false);
+      this.initErrorMessage.set(null);
 
       loadLeaflet()
         .then((L) => {
           if (!this.map) {
+            const existingId = (el as any)._leaflet_id as unknown;
+            if (existingId != null) {
+              try {
+                delete (el as any)._leaflet_id;
+              } catch {
+              }
+            }
+
             this.map = L.map(el, {
               zoomControl: false,
               attributionControl: false,
@@ -109,7 +119,12 @@ export class MapCardComponent {
 
           setTimeout(() => this.map?.invalidateSize(), 250);
         })
-        .catch(() => this.initError.set(true));
+        .catch((e) => {
+          this.initError.set(true);
+          const message =
+            e instanceof Error ? e.message : typeof e === 'string' ? e : null;
+          this.initErrorMessage.set(message);
+        });
     });
   }
 
