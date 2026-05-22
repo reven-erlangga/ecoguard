@@ -13,6 +13,9 @@ steps:
 images:
   - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_IMAGE_NAME}:$SHORT_SHA
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 substitutions:
   _REGION: asia-southeast2
   _AR_REPO: ecoguard-fe
