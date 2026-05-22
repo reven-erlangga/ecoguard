@@ -30,6 +30,11 @@ Folder `frontend/` sudah punya `Dockerfile`. Cloud Run menjalankan aplikasi seba
 - Install **gcloud CLI** (kalau pakai Cloud Shell, sudah tersedia)
 - Install Docker (opsional kalau build image-nya pakai Cloud Build, bukan local)
 
+Kalau pakai Cloud Shell:
+
+- Buka Cloud Shell di GCP Console
+- Clone repo frontend kamu, lalu masuk ke folder `frontend/`
+
 Login & set project:
 
 ```bash
@@ -116,7 +121,7 @@ gcloud auth configure-docker "$REGION-docker.pkg.dev"
 
 ### A4) Build & push image
 
-#### A5a) Build pakai Docker lokal
+#### A4a) Build pakai Docker lokal
 
 ```bash
 docker build \
@@ -127,7 +132,7 @@ docker build \
 docker push "$IMAGE"
 ```
 
-#### A5b) Build tanpa Docker lokal (pakai Cloud Build)
+#### A4b) Build tanpa Docker lokal (pakai Cloud Build)
 
 ```bash
 gcloud builds submit \
