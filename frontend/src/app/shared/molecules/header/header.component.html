@@ -1,0 +1,8 @@
+<div [class]="containerClasses()">
+  <app-heading [level]="level()" [border]="border()" [text]="title()" className="mb-2"></app-heading>
+  @if (subtitle()) {
+    <app-paragraph color="muted" className="mb-6">
+      {{ subtitle() }}
+    </app-paragraph>
+  }
+</div>

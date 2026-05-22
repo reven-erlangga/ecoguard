@@ -1,0 +1,97 @@
+<!-- Neubrutalist Interactive Filter Bar -->
+<div class="flex gap-4 mb-8 w-full items-center">
+  <!-- Search Input (takes all remaining space) -->
+  <div class="flex-grow">
+    <app-input class="w-full" [value]="searchVal()" (valueChange)="searchChange.emit($event)"
+      placeholder="SEARCH INCIDENTS..."></app-input>
+  </div>
+
+  <!-- Filter Button Trigger -->
+  <div>
+    <app-button (btnClick)="openFilterModal()" variant="white">
+      <svg class="h-4 w-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+      </svg>
+      <span class="font-mono text-xs font-black uppercase">FILTER</span>
+    </app-button>
+  </div>
+
+  <!-- Premium Neubrutalist Filter Modal -->
+  <app-modal [isOpen]="isFilterModalOpen()" (close)="closeFilterModal()"
+    className="max-w-md border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] !rounded-none p-6 font-mono text-black">
+    <div class="mb-6 mt-2">
+      <h2 class="text-lg font-black uppercase border-b-4 border-black pb-2 flex items-center gap-2">
+        <svg class="h-5 w-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+        FILTER OPTIONS
+      </h2>
+    </div>
+
+    <div class="space-y-6">
+      <!-- Status Filter Section -->
+      <div>
+        <label class="block font-black text-xs uppercase mb-2">SELECT STATUS</label>
+        <div class="relative w-full">
+          <app-button class="w-full" (btnClick)="toggleStatusDropdown()" variant="white"
+            className="dropdown-toggle w-full justify-between text-left !p-3 font-mono text-xs uppercase">
+            <span>{{ tempStatus() ? tempStatus() : 'ALL STATUSES' }}</span>
+            <svg class="h-4 w-4 text-black transition-transform" [class.rotate-180]="isStatusOpen()" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+            </svg>
+          </app-button>
+
+          <app-dropdown [isOpen]="isStatusOpen()" className="w-full" (close)="isStatusOpen.set(false)">
+            <app-dropdown-item (click)="selectStatus('')">ALL STATUSES</app-dropdown-item>
+            <app-dropdown-item (click)="selectStatus('PENDING')">PENDING</app-dropdown-item>
+            <app-dropdown-item (click)="selectStatus('IN_PROGRESS')">IN PROGRESS</app-dropdown-item>
+            <app-dropdown-item (click)="selectStatus('RESOLVED')">RESOLVED</app-dropdown-item>
+            <app-dropdown-item (click)="selectStatus('UNRESOLVED')">UNRESOLVED</app-dropdown-item>
+            <app-dropdown-item (click)="selectStatus('CLOSED')">CLOSED</app-dropdown-item>
+            <app-dropdown-item (click)="selectStatus('NEED_INFO')">NEED INFO</app-dropdown-item>
+          </app-dropdown>
+        </div>
+      </div>
+
+      <!-- Category Filter Section -->
+      <div>
+        <label class="block font-black text-xs uppercase mb-2">SELECT CATEGORY</label>
+        <div class="relative w-full">
+          <app-button class="w-full" (btnClick)="toggleCategoryDropdown()" variant="white"
+            className="dropdown-toggle w-full justify-between text-left !p-3 font-mono text-xs uppercase">
+            <span class="truncate pr-2">{{ getSelectedTempCategoryName() }}</span>
+            <svg class="h-4 w-4 text-black transition-transform" [class.rotate-180]="isCategoryOpen()" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+            </svg>
+          </app-button>
+
+          <app-dropdown [isOpen]="isCategoryOpen()" className="w-full max-h-60 overflow-y-auto"
+            (close)="isCategoryOpen.set(false)">
+            <app-dropdown-item (click)="selectCategory('')">ALL CATEGORIES</app-dropdown-item>
+            @for (cat of categories(); track cat.id) {
+            <app-dropdown-item (click)="selectCategory(cat.id)">{{ cat.name }}</app-dropdown-item>
+            }
+          </app-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Action Footer -->
+    <div class="mt-8 pt-4 border-t-2 border-black flex justify-between gap-4">
+      <!-- Reset Filters Button -->
+      <app-button (btnClick)="resetFilters()" variant="outline" className="!py-2 !px-4">
+        RESET
+      </app-button>
+
+      <!-- Apply Filters Button -->
+      <app-button (btnClick)="applyFilters()" variant="primary"
+        className="!py-2 !px-6 bg-black text-white hover:bg-gray-900">
+        APPLY
+      </app-button>
+    </div>
+  </app-modal>
+</div>

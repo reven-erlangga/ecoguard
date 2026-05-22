@@ -1,0 +1,78 @@
+<div class="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
+  <app-social-report-header></app-social-report-header>
+  
+  <!-- Filter Bar -->
+  <div class="flex gap-3 mb-6 w-full items-center">
+    <!-- Search Input -->
+    <div class="grow">
+      <app-input 
+        class="w-full" 
+        [value]="facade.search()" 
+        (valueChange)="facade.setSearch($event)"
+        placeholder="SEARCH SOCIAL REPORTS..."
+      ></app-input>
+    </div>
+
+    <!-- Filter Toggle Button -->
+    <div>
+      <app-button (btnClick)="isFilterOpen.set(!isFilterOpen())" variant="white" className="!p-3 flex items-center gap-1.5">
+        <fa-icon [icon]="faFilter"></fa-icon> <span class="font-mono text-xs font-black uppercase">FILTER</span>
+      </app-button>
+    </div>
+  </div>
+
+  <!-- Collapsible Filter Panel -->
+  @if (isFilterOpen()) {
+    <div class="grid grid-cols-2 gap-4 mb-6 p-4 border-4 border-black bg-gray-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <!-- Status Filter -->
+      <div class="relative">
+        <label class="block font-black text-[10px] uppercase mb-1">Status</label>
+        <app-button class="w-full" (btnClick)="isStatusOpen.set(!isStatusOpen())" variant="white"
+          className="dropdown-toggle w-full justify-between text-left !p-2.5 font-mono text-[10px] uppercase flex items-center">
+          <span>{{ facade.selectedStatus() ? facade.selectedStatus() : 'ALL STATUSES' }}</span>
+          <fa-icon [icon]="faChevronDown"></fa-icon>
+        </app-button>
+        <app-dropdown [isOpen]="isStatusOpen()" className="w-full" (close)="isStatusOpen.set(false)">
+          <app-dropdown-item (click)="facade.setStatus(''); isStatusOpen.set(false)">ALL STATUSES</app-dropdown-item>
+          <app-dropdown-item (click)="facade.setStatus('PENDING'); isStatusOpen.set(false)">PENDING</app-dropdown-item>
+          <app-dropdown-item (click)="facade.setStatus('RESOLVED'); isStatusOpen.set(false)">RESOLVED</app-dropdown-item>
+          <app-dropdown-item (click)="facade.setStatus('UNRESOLVED'); isStatusOpen.set(false)">UNRESOLVED</app-dropdown-item>
+        </app-dropdown>
+      </div>
+
+      <!-- Category Filter -->
+      <div class="relative">
+        <label class="block font-black text-[10px] uppercase mb-1">Category</label>
+        <app-button class="w-full" (btnClick)="isCategoryOpen.set(!isCategoryOpen())" variant="white"
+          className="dropdown-toggle w-full justify-between text-left !p-2.5 font-mono text-[10px] uppercase flex items-center">
+          <span class="truncate pr-2">{{ getCategoryName(facade.selectedCategory()) }}</span>
+          <fa-icon [icon]="faChevronDown"></fa-icon>
+        </app-button>
+        <app-dropdown [isOpen]="isCategoryOpen()" className="w-full max-h-40 overflow-y-auto" (close)="isCategoryOpen.set(false)">
+          <app-dropdown-item (click)="facade.setCategory(''); isCategoryOpen.set(false)">ALL CATEGORIES</app-dropdown-item>
+          @for (cat of facade.categories(); track cat.id) {
+            <app-dropdown-item (click)="facade.setCategory(cat.id); isCategoryOpen.set(false)">{{ cat.name }}</app-dropdown-item>
+          }
+        </app-dropdown>
+      </div>
+    </div>
+  }
+
+  <!-- Prioritize data over loading to avoid flickering during hydration -->
+  @if (facade.data().length > 0) {
+    <app-social-report-list [reports]="facade.data()"></app-social-report-list>
+  } @else if (facade.loading()) {
+    <app-social-report-loading></app-social-report-loading>
+  } @else {
+    <div class="h-32 flex items-center justify-center text-gray-400 font-mono border-2 border-dashed border-gray-300 bg-gray-50">
+      NO_REPORTS_FOUND
+    </div>
+  }
+
+  <app-social-report-pagination 
+    [currentPage]="facade.currentPage()"
+    [totalPages]="facade.totalPages()"
+    (prev)="facade.prevPage()"
+    (next)="facade.nextPage()"
+  ></app-social-report-pagination>
+</div>

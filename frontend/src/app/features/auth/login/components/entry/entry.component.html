@@ -1,0 +1,15 @@
+<form (ngSubmit)="facade.onSubmit($event)" class="space-y-6 relative z-20">
+  <div>
+    <label class="block text-xs font-black uppercase mb-2">Email Address</label>
+    <app-input [value]="facade.email()" (valueChange)="facade.email.set($event)" type="email" placeholder="ENTER EMAIL ADDRESS..." class="w-full" [disabled]="facade.isLoading()"></app-input>
+  </div>
+  <div>
+    <label class="block text-xs font-black uppercase mb-2">Password</label>
+    <app-input [value]="facade.password()" (valueChange)="facade.password.set($event)" type="password" placeholder="ENTER PASSWORD..." class="w-full" [disabled]="facade.isLoading()"></app-input>
+  </div>
+  <div class="pt-4">
+    <app-button type="submit" [disabled]="facade.isLoading() || !facade.isFormValid()" variant="primary" className="w-full justify-center py-4 font-black tracking-wider">
+      @if (facade.isLoading()) { VERIFYING... } @else { SIGN IN }
+    </app-button>
+  </div>
+</form>

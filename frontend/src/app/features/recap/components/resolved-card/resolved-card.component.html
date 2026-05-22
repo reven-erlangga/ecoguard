@@ -1,0 +1,19 @@
+<app-card
+  title="RESOLVED TODAY"
+  subtitle="COMPLETED REPORTS"
+  bgClass="bg-green-50"
+>
+  <div
+    class="absolute -top-5 -left-5 w-14 h-14 flex items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-10 rotate-[4deg]"
+    style="background-color: #22C55E;"
+  >
+    <fa-icon [icon]="faCircleCheck" class="text-white text-2xl"></fa-icon>
+  </div>
+
+  <div class="mt-4 flex items-center gap-3">
+    <span class="text-5xl font-black font-mono text-black">{{ value() }}</span>
+    <span class="text-xs font-bold font-mono text-green-700 bg-green-100 px-2 py-0.5 border border-green-600">
+      RESOLVED
+    </span>
+  </div>
+</app-card>

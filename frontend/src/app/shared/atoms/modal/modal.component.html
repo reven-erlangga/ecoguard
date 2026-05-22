@@ -1,0 +1,25 @@
+<div class="fixed inset-0 z-[99999] flex items-center justify-center overflow-y-auto"
+  [class.pointer-events-none]="!isOpen">
+  <!-- Backdrop -->
+  @if (!isFullscreen) {
+  <div class="fixed inset-0 h-full w-full bg-gray-900/40 backdrop-blur-sm ease-in-out"
+    [class]="(isMounted ? 'transition-all duration-300 ' : '') + (isOpen ? 'opacity-100 visible' : 'opacity-0 invisible')" (click)="onBackdropClick($event)"></div>
+  }
+  <!-- Modal Content -->
+  <div [class]="(isFullscreen ? 'w-full h-full ' : 'relative w-full rounded-none ') + 
+             'bg-white shadow-2xl ease-out transform ' + 
+             (isMounted ? 'transition-all duration-300 ' : '') +
+             (isOpen ? 'scale-100 translate-y-0 opacity-100 visible' : 'scale-95 translate-y-4 opacity-0 invisible') + 
+             ' ' + className" (click)="onContentClick($event)">
+
+    <!-- Premium Neubrutalist Overlapping Close Button -->
+    <app-button (btnClick)="close.emit()" variant="white"
+      className="absolute -right-3 -top-3 z-[999] !p-0 h-8 w-8 !bg-[#ff5a5a] text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rotate-6 hover:!bg-rose-600 hover:-translate-y-0.5 hover:scale-120 flex items-center justify-center">
+      <fa-icon [icon]="faXmark"></fa-icon>
+    </app-button>
+
+    <div>
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<app-card
+  [title]="'Geolocation'"
+  [subtitle]="'VERIFIED AREA'"
+  [bgClass]="'bg-white'"
+  [badgeIcon]="faLocationDot"
+  [badgeColor]="'#111827'"
+  [badgeRotate]="'rotate-[4deg]'">
+
+  <div class="space-y-4">
+    <div class="relative border-4 border-black bg-gray-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+      <div #mapContainer class="h-[250px] w-full"></div>
+
+      <ng-content select="[overlay]"></ng-content>
+
+      @if (latitude() == null || longitude() == null) {
+      <div class="absolute inset-0 flex items-center justify-center bg-white/90">
+        <div class="border-2 border-black bg-white px-3 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div class="font-mono font-black text-[10px] uppercase text-black tracking-wider">Location Unavailable</div>
+          <div class="font-mono text-[10px] text-gray-500">No coordinates provided.</div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="bg-gray-50 border-2 border-black p-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-mono text-xs grid grid-cols-2 gap-4">
+      <div>
+        <span class="block text-[9px] text-gray-500 font-black uppercase">Latitude</span>
+        <span class="font-black text-black">{{ latitude() ?? 'N/A' }}</span>
+      </div>
+      <div>
+        <span class="block text-[9px] text-gray-500 font-black uppercase">Longitude</span>
+        <span class="font-black text-black">{{ longitude() ?? 'N/A' }}</span>
+      </div>
+    </div>
+  </div>
+</app-card>
+

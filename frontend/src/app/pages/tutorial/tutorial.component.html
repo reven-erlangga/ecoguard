@@ -1,0 +1,37 @@
+<app-main-template title="System Tutorial"
+  subtitle="Follow this complete operational guide to test and run our real-time social disaster tracking stream.">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
+    <!-- Card 1: Activate X_Stream Ingestion -->
+    <app-tutorial-card title="Activate X_STREAM Service" subtitle="Phase 01 — System Activation" bgClass="bg-[#FFFBEB]"
+      badge="01" badgeColor="#FFC72C" badgeRotate="rotate-[-6deg]" icon="lightning"
+      description="To start listening to the real-time public stream, the system ingestion engine must be toggled on. Toggle the <strong>X_STREAM</strong> switch in the global header to <span class='bg-[#22c55e] text-white px-1.5 py-0.5 rounded font-bold'>ACTIVE</span> to initialize the social media listener."
+      [checklist]="[
+        'Header switch updates to active live mode.',
+        'System starts scanning incoming mentions and hashtags.'
+      ]" />
+
+    <!-- Card 2: Craft a Social Media Report -->
+    <app-tutorial-card title="Submit Report on Twitter" subtitle="Phase 02 — Citizen Report" bgClass="bg-[#EFF6FF]"
+      badge="02" badgeColor="#3B82F6" badgeRotate="rotate-[4deg]" icon="twitter"
+      description="Simulate a public report by creating a tweet mentioning <strong>@mnatori26</strong> along with the designated disaster signature hashtag <strong>#LaporinAja</strong>. Provide a descriptive location and issue statement (e.g. <em>&quot;@mnatori26 Ada tanggul jebol banjir parah di Jalan Ahmad Yani #LaporinAja&quot;</em>)."
+      tweetCode="💬 @mnatori26 ada pohon tumbang menghalangi jalan di jalan ahmad yani surabaya #LaporinAja" />
+
+    <!-- Card 3: Real-Time Ingestion -->
+    <app-tutorial-card title="Structured Issue Ingestion" subtitle="Phase 03 — Ingestion" bgClass="bg-[#F0FDF4]"
+      badge="03" badgeColor="#22C55E" badgeRotate="rotate-[-3deg]" icon="list"
+      description="Our backend social media listener processes the tweet, extracts precise geospatial coordinates, translates the report into formal records, and lists it instantly inside the <strong>Issue Tracking</strong> directory table."
+      [checklist]="[
+        'Structured records containing coordinates, status, and severity are parsed.',
+        'The issue details show live interactive maps and full descriptions.'
+      ]" />
+
+    <!-- Card 4: Geospatial Monitoring -->
+    <app-tutorial-card title="Geospatial Ingestion Monitor" subtitle="Phase 04 — Analytics" bgClass="bg-[#FAF5FF]"
+      badge="04" badgeColor="#A855F7" badgeRotate="rotate-[5deg]" icon="map"
+      description="Navigate to the <strong>Monitor</strong> dashboard to visualize aggregated reports. Live clustering algorithms dynamically categorize reports on an interactive GIS map, providing an operational overview of ongoing emergencies."
+      [checklist]="[
+        'View analytics charts containing report distribution and risk factors.',
+        'Geocoded points dynamically display active disaster hotzones.'
+      ]" />
+  </div>
+</app-main-template>

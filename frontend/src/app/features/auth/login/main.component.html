@@ -1,0 +1,6 @@
+<app-auth-template title="AUTHENTICATION" subtitle="System Gateway" headerTitle="Login to Portal" headerSubtitle="ENTER CREDENTIALS TO SECURE SESSION">
+  @if (facade.error()) {
+    <app-login-alert [message]="facade.error()!"></app-login-alert>
+  }
+  <app-entry></app-entry>
+</app-auth-template>

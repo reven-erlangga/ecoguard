@@ -1,0 +1,12 @@
+<app-card
+  [title]="issue.title"
+  [subtitle]="issue.createdAt.toString()"
+  [bgClass]="'bg-white'"
+  [badgeIcon]="statusMeta.icon"
+  [badgeColor]="statusMeta.badgeColor"
+  [badgeRotate]="'rotate-[-6deg]'">
+  <div
+    class="bg-gray-50 border-3 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-mono text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+    {{ issue.description }}
+  </div>
+</app-card>

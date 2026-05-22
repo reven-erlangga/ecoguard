@@ -1,0 +1,8 @@
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+  @for (img of images(); track $index) {
+  <div>
+    <img [src]="img.src" [alt]="img.alt || 'grid image'"
+      class="w-full border border-gray-200 rounded-xl object-cover" />
+  </div>
+  }
+</div>

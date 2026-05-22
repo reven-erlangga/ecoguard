@@ -1,0 +1,31 @@
+<div class="h-64 flex items-end justify-between gap-2 sm:gap-4 p-4 bg-gray-50 border-2 border-black relative">
+  <!-- Y-Axis Labels (Simple) -->
+  <div class="absolute left-2 top-2 bottom-2 flex flex-col justify-between text-[8px] font-mono font-bold text-gray-400">
+    <span>100%</span>
+    <span>75%</span>
+    <span>50%</span>
+    <span>25%</span>
+    <span>0%</span>
+  </div>
+
+  @for (item of data; track item.month) {
+    <div class="flex-1 flex flex-col items-center group">
+      <!-- Bar -->
+      <div 
+        class="w-full bg-brand-500 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:bg-brand-600 transition-all relative overflow-hidden"
+        [style.height]="getHeight(item.value, getMax(data))"
+      >
+        <!-- Overlay Pattern -->
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 4px 4px;"></div>
+        
+        <!-- Tooltip on Hover (Simple CSS) -->
+        <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[8px] px-1 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          {{ item.value }}% REDUCED
+        </div>
+      </div>
+      
+      <!-- Label -->
+      <span class="mt-2 font-mono text-[10px] font-black text-black">{{ item.month }}</span>
+    </div>
+  }
+</div>

@@ -1,0 +1,14 @@
+<app-main-template title="Issue Tracking" subtitle="Monitor and verify environmental impact from social reports.">
+  <!-- Stats Grid -->
+  <app-stage class="block mb-8"></app-stage>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content (Chart & Table) -->
+    <div class="lg:col-span-2 space-y-8">
+      <app-issue-datatable-main></app-issue-datatable-main>
+    </div>
+
+    <!-- Social Reports (Tweets) -->
+    <app-social-report></app-social-report>
+  </div>
+</app-main-template>

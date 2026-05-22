@@ -1,0 +1,13 @@
+@if (issue(); as issue) {
+@let loc = issue.location?.[0];
+
+<app-map-card [latitude]="loc?.lat ?? null" [longitude]="loc?.lon ?? null">
+  @if (loc) {
+  <div overlay class="absolute bottom-4 left-4 bg-white border-2 border-black px-3 py-1 text-[10px] font-black font-mono shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+    {{ loc.name }}
+  </div>
+  }
+</app-map-card>
+} @else {
+<app-map-card [latitude]="null" [longitude]="null"></app-map-card>
+}

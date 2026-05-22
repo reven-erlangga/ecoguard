@@ -1,0 +1,73 @@
+<app-datatable title="Issue Reports" subtitle="INCIDENT_VERIFICATION_LOG" [columns]="columns" [loading]="loading()"
+  [pagination]="pagination()" (pagePrev)="pagePrev.emit()" (pageNext)="pageNext.emit()">
+
+  <!-- Neubrutalist Reusable Filter Bar -->
+  <app-issue-filter filters [searchVal]="searchVal()" [statusVal]="statusVal()" [categoryVal]="categoryVal()"
+    [categories]="categories()" (searchChange)="searchChange.emit($event)" (statusChange)="statusChange.emit($event)"
+    (categoryChange)="categoryChange.emit($event)"></app-issue-filter>
+
+  <ng-container rows>
+    @if (loading()) {
+    @for (i of [1,2,3,4,5]; track i) {
+    <tr app-issue-datatable-loading></tr>
+    }
+    } @else {
+    @for (issue of issues(); track issue.id) {
+    <tr app-table-row [hoverable]="true">
+      <td app-table-cell>
+        <div class="font-black text-black text-sm">{{ issue.title }}</div>
+        <div class="text-[10px] text-gray-400 font-mono line-clamp-1 uppercase">{{ issue.description }}</div>
+      </td>
+      <td app-table-cell>
+        <app-badge [color]="getSeverityColor(issue.severity)" size="sm">
+          {{ issue.severity }}
+        </app-badge>
+      </td>
+      <td app-table-cell>
+        <app-badge [color]="getStatusColor(issue.status)" size="sm">
+          {{ issue.status }}
+        </app-badge>
+      </td>
+      <td app-table-cell class="font-mono text-[10px] font-bold text-gray-500">
+        {{ issue.createdAt | date:'yyyy-MM-dd HH:mm' }}
+      </td>
+      <td app-table-cell class="text-right">
+        <div class="flex justify-end items-center gap-2">
+          <app-button (btnClick)="viewDetail.emit(issue.id)" variant="primary" className="!p-3">
+            <fa-icon [icon]="faEye"></fa-icon>
+          </app-button>
+          @if (issue.status === 'PENDING' || issue.status === 'IN_PROGRESS') {
+          <div class="relative inline-block text-left">
+            <!-- Dropdown Trigger Button using Atomic app-button -->
+            <app-button (btnClick)="toggleDropdown(issue.id)" variant="white"
+              className="dropdown-toggle bg-amber-400 hover:bg-amber-500 text-black !p-3 gap-1.5 flex items-center justify-center">
+              <fa-icon [icon]="faGear" class="transition-transform"
+                [class.rotate-180]="openDropdownId() === issue.id"></fa-icon>
+            </app-button>
+
+            <!-- Neubrutalist Atomic Dropdown Menu List -->
+            <app-dropdown [isOpen]="openDropdownId() === issue.id" className="w-28" (close)="openDropdownId.set(null)">
+              <app-dropdown-item className="text-emerald-600 hover:bg-emerald-50"
+                (click)="selectAction('RESOLVED', issue.id)">
+                <fa-icon [icon]="faCheck" class="mr-1.5"></fa-icon> SOLVE
+              </app-dropdown-item>
+              <app-dropdown-item className="text-rose-600 hover:bg-rose-50"
+                (click)="selectAction('UNRESOLVED', issue.id)">
+                <fa-icon [icon]="faXmark" class="mr-1.5"></fa-icon> UNSOLVE
+              </app-dropdown-item>
+            </app-dropdown>
+          </div>
+          }
+        </div>
+      </td>
+    </tr>
+    } @empty {
+    <tr app-table-row [hoverable]="false">
+      <td app-table-cell [colspan]="5" class="text-center py-12 text-gray-300 font-mono font-black italic text-xs">
+        NO_ISSUES_RECORDED
+      </td>
+    </tr>
+    }
+    }
+  </ng-container>
+</app-datatable>

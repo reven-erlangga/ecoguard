@@ -1,0 +1,14 @@
+<div class="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
+  <app-reduction-trend-header></app-reduction-trend-header>
+  
+  <!-- Prioritize data over loading to avoid flickering during hydration -->
+  @if (facade.data().length > 0) {
+    <app-reduction-trend-chart [data]="facade.data()"></app-reduction-trend-chart>
+  } @else if (facade.loading()) {
+    <app-reduction-trend-loading></app-reduction-trend-loading>
+  } @else {
+    <div class="h-64 flex items-center justify-center text-gray-400 font-mono border-2 border-dashed border-gray-300 bg-gray-50">
+      NO_DATA_AVAILABLE
+    </div>
+  }
+</div>

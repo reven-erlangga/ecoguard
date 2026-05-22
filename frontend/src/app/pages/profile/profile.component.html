@@ -1,0 +1,49 @@
+<app-admin-template>
+  <div class="p-6 space-y-6">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-extrabold text-black font-mono uppercase">Live Impact Ledger</h1>
+      <span class="text-xs font-bold text-gray-500 font-mono">Click a row to view blockchain verification details</span>
+    </div>
+    
+    <div>
+      <table app-table>
+        <thead app-table-header>
+          <tr app-table-row>
+            <th app-table-cell [isHeader]="true">TRANSACTION ID</th>
+            <th app-table-cell [isHeader]="true">PROJECT ENTITY</th>
+            <th app-table-cell [isHeader]="true">VERIFICATION</th>
+            <th app-table-cell [isHeader]="true">NET IMPACT</th>
+          </tr>
+        </thead>
+        <tbody app-table-body>
+          <tr app-table-row>
+            <td app-table-cell>TRK-001</td>
+            <td app-table-cell>
+              <div class="flex flex-col">
+                <span class="font-bold">Reforestation A1</span>
+                <span class="text-xs text-gray-500">2024-05-01</span>
+              </div>
+            </td>
+            <td app-table-cell>
+              <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 border border-green-600 font-mono">VERIFIED</span>
+            </td>
+            <td app-table-cell>12.5 tons</td>
+          </tr>
+          <tr app-table-row>
+            <td app-table-cell>TRK-002</td>
+            <td app-table-cell>
+              <div class="flex flex-col">
+                <span class="font-bold">Solar Farm B2</span>
+                <span class="text-xs text-gray-500">2024-04-30</span>
+              </div>
+            </td>
+            <td app-table-cell>
+              <span class="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-0.5 border border-yellow-600 font-mono">PENDING</span>
+            </td>
+            <td app-table-cell>8.2 tons</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</app-admin-template>

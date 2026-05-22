@@ -1,0 +1,10 @@
+<div class="flex flex-col">
+  <span class="text-[10px] font-bold text-gray-500 font-mono tracking-wider">SYSTEM STATUS</span>
+  <div class="flex items-center gap-2">
+    <span class="w-2 h-2 rounded-full" [class.bg-green-500]="facade.status() === 'ACTIVE'" [class.bg-red-500]="facade.status() === 'DEACTIVE'"></span>
+    <span class="text-sm font-bold text-black font-mono">{{ facade.systemName() }}: {{ facade.status() }}</span>
+    @if (facade.loading()) {
+      <div class="animate-spin h-3 w-3 border border-brand-500 border-t-transparent rounded-full ml-1"></div>
+    }
+  </div>
+</div>

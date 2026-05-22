@@ -1,0 +1,13 @@
+<app-auth-template
+  title="ONBOARDING"
+  subtitle="System Gateway"
+  headerTitle="Register Account"
+  headerSubtitle="CREATE CREDENTIALS TO ACCESS PORTAL">
+
+  @if (facade.error()) {
+    <app-register-alert [message]="facade.error()!"></app-register-alert>
+  }
+
+  <app-register-entry></app-register-entry>
+
+</app-auth-template>

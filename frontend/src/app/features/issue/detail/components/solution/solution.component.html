@@ -1,0 +1,71 @@
+<app-card
+  [title]="'Solution Log'"
+  [subtitle]="'RESOLUTION'"
+  [bgClass]="'bg-white'"
+  [badgeColor]="resolutionMeta.badgeColor"
+  [badgeRotate]="'rotate-[-6deg]'"
+  [badgeIcon]="resolutionMeta.icon"
+>
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2">
+      <span
+        class="px-3 py-1 border-2 border-black text-[10px] font-black font-mono uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+        [style.background-color]="resolutionMeta.badgeColor"
+        [class.text-white]="resolutionMeta.pillTextClass === 'text-white'"
+        [class.text-black]="resolutionMeta.pillTextClass === 'text-black'"
+      >
+        <fa-icon [icon]="resolutionMeta.icon" class="mr-1"></fa-icon>
+        {{ resolutionMeta.label }}
+      </span>
+    </div>
+
+    <span class="text-[10px] text-gray-500 font-mono font-bold">
+      {{ issue.updatedAt | date:'medium' }}
+    </span>
+  </div>
+
+  @if (issue.latestResolution?.note) {
+    <div class="border-3 border-black bg-gray-50 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">
+      <div class="flex items-center gap-2 mb-2">
+        <fa-icon [icon]="faNoteSticky" class="text-black"></fa-icon>
+        <span class="font-black font-mono uppercase text-[10px] tracking-wider">Resolution Note</span>
+      </div>
+      <div class="font-mono text-xs text-gray-800 whitespace-pre-wrap leading-relaxed">
+        {{ issue.latestResolution?.note }}
+      </div>
+    </div>
+  }
+
+  @if (issue.latestResolution?.image_url) {
+    <div class="border-3 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <div class="flex items-center gap-2">
+          <fa-icon [icon]="faImage" class="text-black"></fa-icon>
+          <span class="font-black font-mono uppercase text-[10px] tracking-wider">Evidence</span>
+        </div>
+        <a
+          class="text-[10px] font-black font-mono uppercase underline"
+          [href]="issue.latestResolution?.image_url || ''"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open Image
+        </a>
+      </div>
+
+      <img
+        class="w-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] object-cover max-h-[280px]"
+        [src]="issue.latestResolution?.image_url || ''"
+        alt="Resolution evidence image"
+        loading="lazy"
+        referrerpolicy="no-referrer"
+      />
+    </div>
+  }
+
+  @if (!issue.latestResolution?.note && !issue.latestResolution?.image_url) {
+    <div class="border-2 border-dashed border-gray-300 bg-gray-50 p-4 font-mono text-[10px] text-gray-500 uppercase font-black">
+      No resolution note or image provided.
+    </div>
+  }
+</app-card>

@@ -1,0 +1,59 @@
+<app-card [title]="title()" [subtitle]="subtitle()" [bgClass]="bgClass()" [badgeColor]="badgeColor()"
+  [badgeRotate]="badgeRotate()">
+  <!-- #badge ref enables auto-detection in CardComponent -->
+  @if (badge()) {
+  <span #badgeSlot badge class="font-black font-mono text-2xl text-black">{{ badge() }}</span>
+  }
+  <!-- Render Icon internally based on icon input value -->
+  <div icon
+    class="w-12 h-12 border-4 border-black flex items-center justify-center bg-white shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+    @switch (icon()) {
+    @case ('lightning') {
+    <svg class="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
+    }
+    @case ('twitter') {
+    <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+      <path
+        d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.992-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+    </svg>
+    }
+    @case ('list') {
+    <svg class="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+    </svg>
+    }
+    @case ('map') {
+    <svg class="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+    </svg>
+    }
+    }
+  </div>
+
+  <!-- Card Body Content -->
+  <p class="text-xs text-gray-800 font-mono mb-6 leading-relaxed border-l-4 border-black pl-4"
+    [innerHTML]="description()"></p>
+
+  <!-- Optional Checklist -->
+  @if (checklist() && checklist().length > 0) {
+  <div class="space-y-3 font-mono text-xs text-gray-700">
+    @for (point of checklist(); track point) {
+    <div class="flex items-start gap-2">
+      <span class="text-black font-bold">✓</span>
+      <p class="text-[11px]">{{ point }}</p>
+    </div>
+    }
+  </div>
+  }
+
+  <!-- Optional Tweet Visualizer -->
+  @if (tweetCode()) {
+  <div
+    class="bg-black text-[#00FF66] p-3 border-2 border-black font-mono text-[10px] uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+    {{ tweetCode() }}
+  </div>
+  }
+</app-card>

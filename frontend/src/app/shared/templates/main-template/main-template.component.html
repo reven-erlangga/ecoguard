@@ -1,0 +1,20 @@
+<div class="space-y-8 animate-fade-in-up">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+    <!-- Slot for Header Actions (optional) -->
+    <div>
+      <ng-content select="[header-actions]"></ng-content>
+    </div>
+    <div>
+      <h1 class="text-2xl font-extrabold text-black font-mono uppercase">{{ title() }}</h1>
+      @if (subtitle()) {
+      <p class="text-sm text-gray-500 font-mono">{{ subtitle() }}</p>
+      }
+    </div>
+  </div>
+
+  <!-- Content Slot -->
+  <div>
+    <ng-content></ng-content>
+  </div>
+</div>

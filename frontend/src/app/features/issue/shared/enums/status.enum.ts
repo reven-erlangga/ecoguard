@@ -1,0 +1,8 @@
+export enum IssueStatus {
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  RESOLVED = 'RESOLVED',
+  CLOSED = 'CLOSED',
+  UNRESOLVED = 'UNRESOLVED',
+  NEED_INFO = 'NEED_INFO',
+}

@@ -1,0 +1,23 @@
+<div class="flex items-center justify-between mt-8 border-t-2 border-black pt-6">
+  <app-button 
+    (btnClick)="prev.emit()"
+    [disabled]="currentPage() === 1"
+    variant="white"
+    size="sm"
+  >
+    PREV
+  </app-button>
+
+  <span class="font-mono text-xs font-black uppercase bg-black text-white px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border border-black">
+    PAGE {{ currentPage() }} / {{ totalPages() }}
+  </span>
+
+  <app-button 
+    (btnClick)="next.emit()"
+    [disabled]="currentPage() === totalPages()"
+    variant="primary"
+    size="sm"
+  >
+    NEXT
+  </app-button>
+</div>

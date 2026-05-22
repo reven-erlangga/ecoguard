@@ -1,0 +1,11 @@
+<div class="flex items-center gap-6">
+  <app-status-display></app-status-display>
+  
+  <div class="flex-1">
+    <app-system-state></app-system-state>
+  </div>
+
+  @if (facade.loading()) {
+    <div class="animate-spin h-5 w-5 border-2 border-brand-500 border-t-transparent rounded-full"></div>
+  }
+</div>

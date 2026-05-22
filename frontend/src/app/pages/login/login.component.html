@@ -1,0 +1,53 @@
+<app-auth-template 
+  title="AUTHENTICATION" 
+  subtitle="System Gateway"
+  headerTitle="Login to Portal"
+  headerSubtitle="ENTER CREDENTIALS TO SECURE SESSION"
+>
+  <!-- Alert Notification for error -->
+  @if (facade.error()) {
+    <div class="mb-6 p-4 border-4 border-black bg-red-400 font-mono font-black uppercase text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-pulse">
+      {{ facade.error() }}
+    </div>
+  }
+
+  <!-- Login Form -->
+  <form (ngSubmit)="onSubmit($event)" class="space-y-6 relative z-20">
+    <div>
+      <label class="block text-xs font-black uppercase mb-2">Email Address</label>
+      <app-input 
+        [(value)]="email"
+        type="email"
+        placeholder="ENTER EMAIL ADDRESS..."
+        class="w-full"
+        [disabled]="facade.isLoading()"
+      ></app-input>
+    </div>
+
+    <div>
+      <label class="block text-xs font-black uppercase mb-2">Password</label>
+      <app-input 
+        [(value)]="password"
+        type="password"
+        placeholder="ENTER PASSWORD..."
+        class="w-full"
+        [disabled]="facade.isLoading()"
+      ></app-input>
+    </div>
+
+    <div class="pt-4">
+      <app-button 
+        type="submit" 
+        [disabled]="facade.isLoading() || !isFormValid" 
+        variant="primary" 
+        className="w-full justify-center py-4 font-black tracking-wider"
+      >
+        @if (facade.isLoading()) {
+          VERIFYING...
+        } @else {
+          SIGN IN
+        }
+      </app-button>
+    </div>
+  </form>
+</app-auth-template>

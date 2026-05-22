@@ -1,0 +1,8 @@
+<div [class]="shimmerClasses()">
+  @for (item of items(); track $index) {
+    <div class="px-3 py-2 border-b-2 border-black last:border-b-0 flex items-center gap-2">
+      <div class="h-3 w-3 bg-gray-200 animate-pulse border border-gray-300"></div>
+      <div class="h-3 w-12 bg-gray-200 animate-pulse border border-gray-300"></div>
+    </div>
+  }
+</div>

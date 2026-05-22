@@ -1,0 +1,15 @@
+@if (facade.data(); as data) {
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <app-recap-pending-card    [value]="(data.totalPending ?? 0).toString()"></app-recap-pending-card>
+    <app-recap-resolved-card   [value]="(data.resolvedToday ?? 0).toString()"></app-recap-resolved-card>
+    <app-recap-unresolved-card [value]="(data.unresolvedToday ?? 0).toString()"></app-recap-unresolved-card>
+  </div>
+} @else if (facade.loading()) {
+  <app-recap-loading></app-recap-loading>
+} @else {
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <app-recap-pending-card    value="0"></app-recap-pending-card>
+    <app-recap-resolved-card   value="0"></app-recap-resolved-card>
+    <app-recap-unresolved-card value="0"></app-recap-unresolved-card>
+  </div>
+}

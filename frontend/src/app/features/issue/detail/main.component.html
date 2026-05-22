@@ -1,0 +1,12 @@
+<div class="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+  @if (facade.loading()) {
+  <app-issue-loading></app-issue-loading>
+  } @else if (facade.selectedIssue(); as issue) {
+  <div class="flex flex-col gap-6">
+    <app-issue-info [issue]="issue"></app-issue-info>
+    <app-issue-actions (statusUpdate)="handleStatusUpdate($event)"></app-issue-actions>
+  </div>
+  } @else {
+  <div class="font-mono italic text-gray-500">SELECT_AN_ISSUE_TO_VIEW_DETAILS</div>
+  }
+</div>

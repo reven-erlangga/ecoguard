@@ -1,0 +1,33 @@
+<app-main-template title="Issue Detail" subtitle="Formal Verification Ledger">
+  <div header-actions>
+    <app-button variant="white" routerLink="/issue">
+      <fa-icon [icon]="faArrowLeft"></fa-icon>
+    </app-button>
+  </div>
+
+  @if (facade.loading()) {
+  <app-issue-loading></app-issue-loading>
+  } @else if (!facade.selectedIssue()) {
+  <app-issue-not-found></app-issue-not-found>
+  } @else {
+  @let issue = facade.selectedIssue()!;
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6 items-start">
+
+    <div class="lg:col-span-8 space-y-8">
+      <div class="flex flex-col gap-10">
+        <app-issue-info [issue]="issue"></app-issue-info>
+        @if (issue.source_tweet_id) {
+        <app-issue-tweet [tweetId]="issue.source_tweet_id"></app-issue-tweet>
+        }
+        @if (issue.status === 'RESOLVED' || issue.status === 'UNRESOLVED' || issue.latestResolution) {
+        <app-issue-solution [issue]="issue"></app-issue-solution>
+        }
+      </div>
+    </div>
+
+    <div class="lg:col-span-4 space-y-8">
+      <app-issue-location [issue]="issue"></app-issue-location>
+    </div>
+  </div>
+  }
+</app-main-template>

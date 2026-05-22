@@ -1,0 +1,19 @@
+<app-card
+  title="TOTAL PENDING"
+  subtitle="PENDING REPORTS"
+  bgClass="bg-blue-50"
+>
+  <div
+    class="absolute -top-5 -left-5 w-14 h-14 flex items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-10 rotate-[4deg]"
+    style="background-color: #3B82F6;"
+  >
+    <fa-icon [icon]="faChartLine" class="text-white text-2xl"></fa-icon>
+  </div>
+
+  <div class="mt-4 flex items-center gap-3">
+    <span class="text-5xl font-black font-mono text-black">{{ value() }}</span>
+    <span class="text-xs font-bold font-mono text-blue-700 bg-blue-100 px-2 py-0.5 border border-blue-600">
+      PENDING
+    </span>
+  </div>
+</app-card>

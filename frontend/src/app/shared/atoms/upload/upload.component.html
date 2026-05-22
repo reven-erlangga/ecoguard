@@ -1,0 +1,19 @@
+<div [class]="containerClasses()">
+  <input 
+    type="file" 
+    [accept]="accept()" 
+    (change)="onFileSelected($event)"
+    class="absolute inset-0 opacity-0 cursor-pointer" 
+  />
+  <fa-icon [icon]="faUpload" class="text-xl mb-2 text-black"></fa-icon>
+  
+  @if (value()) {
+    <span class="text-[10px] font-black text-emerald-600 uppercase truncate max-w-xs">
+      📄 {{ value()?.name }}
+    </span>
+  } @else {
+    <span class="text-[10px] font-black text-gray-500 uppercase">
+      {{ placeholder() }}
+    </span>
+  }
+</div>

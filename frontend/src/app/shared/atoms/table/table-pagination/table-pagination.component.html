@@ -1,0 +1,27 @@
+<div class="flex items-center justify-between border-t-4 border-black pt-8 mt-4 w-full">
+  <div class="text-xs font-mono font-bold text-gray-400 uppercase">
+    @if (pagination()) {
+      SHOWING <span class="text-black">PAGE {{ pagination()?.currentPage }}</span> OF <span class="text-black">{{ pagination()?.totalPages }}</span>
+    } @else {
+      LOADING_PAGINATION...
+    }
+  </div>
+
+  <div class="flex gap-4">
+    <app-button 
+      (btnClick)="pagePrev.emit()" 
+      [disabled]="!pagination() || pagination()?.currentPage === 1 || loading()"
+      variant="white"
+      size="md">
+      PREVIOUS
+    </app-button>
+
+    <app-button 
+      (btnClick)="pageNext.emit()" 
+      [disabled]="!pagination() || pagination()?.currentPage === pagination()?.totalPages || loading()"
+      variant="primary"
+      size="md">
+      NEXT
+    </app-button>
+  </div>
+</div>
