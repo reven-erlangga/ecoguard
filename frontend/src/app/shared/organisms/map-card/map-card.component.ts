@@ -35,6 +35,7 @@ export class MapCardComponent {
   private glowOuter: any | null = null;
   private glowInner: any | null = null;
   protected readonly tileError = signal(false);
+  protected readonly initError = signal(false);
 
   constructor() {
     effect(() => {
@@ -47,6 +48,8 @@ export class MapCardComponent {
       const lon = this.longitude();
 
       if (!el || lat == null || lon == null) return;
+
+      this.initError.set(false);
 
       loadLeaflet()
         .then((L) => {
@@ -106,7 +109,7 @@ export class MapCardComponent {
 
           setTimeout(() => this.map?.invalidateSize(), 250);
         })
-        .catch(() => {});
+        .catch(() => this.initError.set(true));
     });
   }
 

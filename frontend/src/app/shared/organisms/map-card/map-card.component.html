@@ -11,6 +11,14 @@
       <div #mapContainer class="h-[250px] w-full"></div>
 
       <ng-content select="[overlay]"></ng-content>
+      @if (initError()) {
+      <div class="absolute inset-0 flex items-center justify-center bg-white/90">
+        <div role="status" class="border-2 border-black bg-white px-3 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div class="font-mono font-black text-[10px] uppercase text-black tracking-wider">Map Failed</div>
+          <div class="font-mono text-[10px] text-gray-500">Could not initialize Leaflet.</div>
+        </div>
+      </div>
+      }
       @if (tileError()) {
       <div class="absolute bottom-3 left-3">
         <div role="status" class="border-2 border-black bg-white px-3 py-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
