@@ -1,15 +1,13 @@
-let leafletPromise: Promise<typeof import('leaflet')> | null = null;
+import type * as Leaflet from 'leaflet';
 
-export function loadLeaflet(): Promise<typeof import('leaflet')> {
+let leafletPromise: Promise<typeof Leaflet> | null = null;
+
+export function loadLeaflet(): Promise<typeof Leaflet> {
   if (leafletPromise) return leafletPromise;
 
-  leafletPromise = new Promise(async (resolve, reject) => {
-    try {
-      const L = await import('leaflet');
-      resolve(L);
-    } catch (e) {
-      reject(e);
-    }
+  leafletPromise = import('leaflet').then((module) => {
+    const mod = module as unknown as (typeof Leaflet & { default?: typeof Leaflet });
+    return (mod.default ?? mod) as typeof Leaflet;
   });
 
   return leafletPromise;
