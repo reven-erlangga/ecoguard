@@ -201,17 +201,46 @@ Opsi yang paling enak: pakai **Cloud Build Trigger** (build otomatis dari GitHub
 
 Console → **Cloud Build** → **Triggers** → **Create trigger**
 
-- Source: GitHub → pilih repo + branch
-- Configuration: `Dockerfile`
-- Dockerfile directory: `/` (root repo `frontend`)
-- Image (Artifact Registry): pilih repo `frontend-repo`, lalu set image name `google-event-frontend` dan tag (mis. `v1`)
+- Source: GitHub → pilih repo `reven-erlangga/ecoguard` + branch (mis. `main`)
+- Configuration: pakai salah satu:
+  - **(Disarankan)** `Cloud Build configuration file` (supaya bisa set build arg `BACKEND_URL`)
+  - `Dockerfile` (kalau UI kamu tidak butuh build arg, tapi ini kurang cocok untuk project ini)
 
 Set `BACKEND_URL`:
 
-- Pastikan runtime Cloud Run punya env var `BACKEND_URL` (langkah B5).
-- Untuk project ini, build-time injection juga disarankan (karena ada penggunaan `process.env['BACKEND_URL']`). Kalau trigger UI kamu tidak bisa set build-arg, gunakan Cloud Shell (Cara A) untuk build via Cloud Build yang bisa pakai `--build-arg`.
+- Project ini menggunakan `process.env['BACKEND_URL']`, jadi **disarankan** set `BACKEND_URL` saat build (build-time) dan juga saat runtime Cloud Run.
 
-Jalankan trigger sekali untuk menghasilkan image di Artifact Registry.
+#### B3a) Disarankan: Trigger pakai file `frontend/cloudbuild.frontend.yaml`
+
+Di repo ini sudah ada file build config: `frontend/cloudbuild.frontend.yaml`.
+
+Saat create trigger:
+
+- Configuration: `Cloud Build configuration file`
+- Location: `Repository`
+- Cloud Build configuration file location: `frontend/cloudbuild.frontend.yaml`
+
+Lalu isi **Substitution variables** (biasanya ada di bagian Advanced / Substitutions):
+
+- `_REGION` = `asia-southeast2`
+- `_AR_REPO` = `ecoguard-fe` (nama repository Artifact Registry kamu)
+- `_IMAGE_NAME` = `ecoguard-fe` (nama image; bebas, tapi disarankan sama dengan service)
+- `_BACKEND_URL` = `https://<DOMAIN_BACKEND_PROD>`
+
+Setelah trigger dibuat, klik **Run** untuk build. Hasilnya akan push image ke:
+
+- `${_REGION}-docker.pkg.dev/<PROJECT_ID>/${_AR_REPO}/${_IMAGE_NAME}:<SHORT_SHA>`
+
+#### B3b) Alternatif: Trigger pakai `Dockerfile` (kurang disarankan untuk project ini)
+
+Kalau kamu tetap mau pakai `Dockerfile` config:
+
+- Configuration: `Dockerfile`
+- Dockerfile path/directory: pilih folder `frontend` (karena Dockerfile ada di `frontend/Dockerfile`)
+- Build context: `frontend`
+- Image (Artifact Registry): pilih repo `ecoguard-fe`, image name `ecoguard-fe`, tag (mis. `v1`)
+
+Catatan: UI Dockerfile trigger sering tidak menyediakan cara untuk set `--build-arg BACKEND_URL`, jadi setelah deploy bisa saja browser masih mengarah ke backend default. Kalau terjadi, pakai B3a atau Cara A (Cloud Shell) yang bisa inject build arg.
 
 ### B4) Deploy ke Cloud Run (via Console)
 
