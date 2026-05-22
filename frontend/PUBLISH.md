@@ -287,3 +287,148 @@ Kalau suatu saat perlu ganti `BACKEND_URL` tanpa rebuild image:
 
 - Saat ini nilai `BACKEND_URL` dipakai juga di browser bundle (build-time). Jadi perubahan runtime env saja belum tentu mengubah request dari browser.
 - Solusi jangka panjang biasanya: pakai relative `/api` + proxy di SSR server, atau runtime config endpoint (`/assets/config.json`) yang dibaca saat app start.
+
+---
+
+# Backend (NestJS) ke Cloud Run (Monorepo: folder `backend/`)
+
+Bagian ini untuk deploy backend NestJS yang ada di folder `backend/` pada repo yang sama.
+
+## 1) Siapkan file untuk backend
+
+Buat 2 file berikut di repo kamu (di folder `backend/`):
+
+### A) `backend/Dockerfile`
+
+```Dockerfile
+FROM node:20-alpine AS build
+WORKDIR /app
+
+RUN corepack enable
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+RUN pnpm run build
+
+FROM node:20-alpine AS runtime
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=8080
+
+RUN corepack enable
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
+
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/assets ./assets
+
+EXPOSE 8080
+CMD ["node", "dist/main"]
+```
+
+Catatan:
+
+- Backend ini baca file dataset dari folder `assets/` (CSV/txt) pakai `process.cwd()`, jadi folder `assets` harus ikut tercopy ke container.
+- Server listen di `process.env.PORT` (Cloud Run isi otomatis). Di Dockerfile diset default `8080`.
+
+### B) `backend/cloudbuild.backend.yaml`
+
+```yaml
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - backend/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_IMAGE_NAME}:$SHORT_SHA
+      - backend
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_IMAGE_NAME}:$SHORT_SHA
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _REGION: asia-southeast2
+  _AR_REPO: ecoguard-be
+  _IMAGE_NAME: ecoguard-be
+```
+
+## 2) Buat Artifact Registry untuk backend
+
+Di Artifact Registry → Create Repository:
+
+- Name: `ecoguard-be`
+- Format: Docker
+- Mode: Standard
+- Region: `asia-southeast2`
+
+## 3) Buat Cloud Build Trigger (backend)
+
+Cloud Build → Triggers → Create trigger:
+
+- Name: `ecoguard-be-build`
+- Event: Push to a branch
+- Branch regex: `^main$`
+- Configuration:
+  - Type: Cloud Build configuration file
+  - Location: Repository
+  - Path: `backend/cloudbuild.backend.yaml`
+- Substitution variables:
+  - `_REGION` = `asia-southeast2`
+  - `_AR_REPO` = `ecoguard-be`
+  - `_IMAGE_NAME` = `ecoguard-be`
+
+Kalau org policy kamu mewajibkan user-managed service account:
+
+- Buat service account mis. `cloud-build-ecoguard-be`
+- Roles minimal:
+  - Cloud Build Editor
+  - Artifact Registry Writer
+
+Run trigger sekali sampai build SUCCESS. Image akan muncul di Artifact Registry dengan tag `$SHORT_SHA`.
+
+## 4) Deploy backend ke Cloud Run (UI)
+
+Cloud Run → Create service:
+
+- Service name: `ecoguard-be`
+- Region: `asia-southeast2`
+- Deploy from: Container image → pilih image dari Artifact Registry `ecoguard-be:<SHORT_SHA>`
+- Authentication:
+  - Kalau backend dipakai frontend publik: biasanya **Allow unauthenticated**
+  - Kalau mau private: Require authentication (nanti perlu auth/IAM)
+- Billing: Request-based
+- Min instances: 0
+
+Set environment variables di “Variables & Secrets” (ambil dari `backend/.env.example`):
+
+- `X_BEARER_TOKEN`
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_PRIVATE_KEY`
+- `FIREBASE_CLIENT_EMAIL`
+- `GEMINI_API_KEY`
+- `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+
+Tambahan yang ada di kode (kalau dipakai):
+
+- `JWT_SECRET`
+- `X_USERNAME`
+- `TWITTERAPI_KEY`, `TWITTERAPI_UNAME`
+- `DBSCAN_EPSILON`, `DBSCAN_MIN_PTS`
+
+Deploy, lalu kamu akan dapat URL Cloud Run backend.
+
+## 5) Hubungkan frontend ke backend
+
+Setelah backend punya URL, update:
+
+- Cloud Build Trigger frontend variable `_BACKEND_URL` → isi URL backend Cloud Run
+- Run trigger frontend lagi → deploy revision frontend baru

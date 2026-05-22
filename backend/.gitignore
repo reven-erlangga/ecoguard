@@ -37,10 +37,21 @@ lerna-debug.log*
 
 # dotenv environment variable files
 .env
+.env.*
 .env.development.local
 .env.test.local
 .env.production.local
 .env.local
+
+# Credentials / keys
+*.pem
+*.key
+*.p12
+*service-account*.json
+*serviceaccount*.json
+firebase-adminsdk*.json
+gcp-credentials*.json
+google-credentials*.json
 
 # temp directory
 .temp
